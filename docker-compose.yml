@@ -1,24 +1,22 @@
 services:
   auth-api:
-    build:
-      context: .
-      dockerfile: AuthApi/Dockerfile
+    image: chromesd22159/auth-api:latest
     ports:
       - "8080:8080"
     depends_on:
       db:
         condition: service_healthy
+
   posts-api:
-    build:
-      context: .
-      dockerfile: PostsApi/Dockerfile
+    image: chromesd22159/posts-api:latest
     ports:
       - "8081:8080"
     depends_on:
       db:
         condition: service_healthy
+
   nginx:
-    image: nginxproxy/nginx-proxy:latest
+    image: nginx:latest
     ports:
       - "80:80"
     volumes:
@@ -26,6 +24,7 @@ services:
     depends_on:
       - auth-api
       - posts-api
+
   db:
     image: postgres
     volumes:
@@ -39,17 +38,8 @@ services:
       test: [ "CMD-SHELL", "pg_isready -U postgres" ]
       interval: 1s
 
-#### LOCAL DEPLOYMENT
-# docker-compose down
-# #docker-compose up -d
-
-#### Build und LOCAL DEPLOYMENT
-# docker compose down &&
-# docker compose build auth-api &&
-# docker compose build posts-api &&
-# docker compose up --watch
-
 #### SERVERSIDE
+# docker login -u chromesd22159 --password-stdin https://hub.docker.com/repository/docker/chromesd22159/auth-api/
 # docker-compose pull
 # docker-compose down
 # docker-compose up -d

@@ -34,7 +34,7 @@ fun Application.configurePostsRouting() {
                 tags = tag
                 description = "Test"
             }) {
-                call.respond(HttpStatusCode.OK, "Hello world")
+                call.respond(HttpStatusCode.OK, "Hello world?")
             }
         }
     }
