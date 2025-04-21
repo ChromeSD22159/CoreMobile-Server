@@ -1,0 +1,55 @@
+services:
+  auth-api:
+    build:
+      context: .
+      dockerfile: AuthApi/Dockerfile
+    ports:
+      - "8080:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+  posts-api:
+    build:
+      context: .
+      dockerfile: PostsApi/Dockerfile
+    ports:
+      - "8081:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+  nginx:
+    image: nginxproxy/nginx-proxy:latest
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - auth-api
+      - posts-api
+  db:
+    image: postgres
+    volumes:
+      - ./tmp/db:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: "ktor_tutorial_db"
+      POSTGRES_HOST_AUTH_METHOD: trust
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 1s
+
+#### LOCAL DEPLOYMENT
+# docker-compose down
+# #docker-compose up -d
+
+#### Build und LOCAL DEPLOYMENT
+# docker compose down &&
+# docker compose build auth-api &&
+# docker compose build posts-api &&
+# docker compose up --watch
+
+#### SERVERSIDE
+# docker-compose pull
+# docker-compose down
+# docker-compose up -d

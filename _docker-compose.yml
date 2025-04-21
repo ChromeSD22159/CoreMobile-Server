@@ -1,0 +1,45 @@
+services:
+  auth-api:
+    image: chromesd22159/auth-api:latest
+    ports:
+      - "8080:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  posts-api:
+    image: chromesd22159/posts-api:latest
+    ports:
+      - "8081:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  nginx:
+    image: nginx:latest
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - auth-api
+      - posts-api
+
+  db:
+    image: postgres
+    volumes:
+      - ./tmp/db:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: "ktor_tutorial_db"
+      POSTGRES_HOST_AUTH_METHOD: trust
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 1s
+
+#### SERVERSIDE
+# docker login -u chromesd22159 --password-stdin https://hub.docker.com/repository/docker/chromesd22159/auth-api/
+# docker-compose pull
+# docker-compose down
+# docker-compose up -d

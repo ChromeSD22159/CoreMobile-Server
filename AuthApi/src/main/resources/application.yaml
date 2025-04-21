@@ -1,0 +1,18 @@
+ktor:
+  application:
+    modules:
+      - de.frederikkohler.authapi.ApplicationKt.module
+  deployment:
+    host: 0.0.0.0
+    port: 8080
+storage:
+  driverClassName: "org.postgresql.Driver"
+  jdbcURL: "jdbc:postgresql://db:5432/ktor_tutorial_db"
+  user: "postgres"
+  password: "password"
+jwt:
+  secret: "de.frederikkohler"
+  issuer: "de.frederikkohler"
+  audience: "your-audience"
+  accessTokenExpiration: 864000
+  refreshTokenExpiration: 3600
