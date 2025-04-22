@@ -10,7 +10,6 @@ import io.ktor.server.auth.authenticate
 import io.ktor.server.auth.bearer
 import io.ktor.server.response.respond
 import io.ktor.server.routing.routing
-import org.jetbrains.exposed.sql.Database
 
 fun Application.configurePostsRouting() {
     val tag = listOf("Test")
@@ -21,7 +20,7 @@ fun Application.configurePostsRouting() {
         bearer("authenticated") {
             realm = "Access to the '/' path"
             authenticate { tokenCredential ->
-                jwtService.verifyAccessTokenAndGetUserId(tokenCredential.token)?.let { userId ->
+                jwtService.verifyRefreshTokenAndGetUserId(tokenCredential.token)?.let { userId ->
                     tokenCredential.token
                 }
             }

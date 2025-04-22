@@ -2,8 +2,8 @@ package de.frederikkohler.shared.services
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
-import io.ktor.server.config.*
-import java.util.*
+import io.ktor.server.config.ApplicationConfig
+import java.util.Date
 
 class JwtService(private val config: ApplicationConfig) {
 
@@ -29,6 +29,7 @@ class JwtService(private val config: ApplicationConfig) {
             .withIssuer(issuer)
             .withAudience(audience)
             .withClaim("userId", userId)
+            .withClaim("access", "all")
             .withExpiresAt(Date(System.currentTimeMillis() + refreshTokenExpiration * 1000))
             .sign(algorithm)
     }
@@ -40,7 +41,36 @@ class JwtService(private val config: ApplicationConfig) {
                 .withAudience(audience)
                 .build()
                 .verify(token)
-            decodedJWT.getClaim("userId").asString()
+
+            val userId = decodedJWT.getClaim("userId")?.asString()
+            val accessClaim = decodedJWT.getClaim("access")?.asString()
+
+            if (accessClaim.isNullOrBlank() && !userId.isNullOrBlank()) {
+                userId
+            } else {
+                null
+            }
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+    fun verifyAccessTokenAndGenerateRefreshToken(token: String): String? {
+        return try {
+            val decodedJWT = JWT.require(algorithm)
+                .withIssuer(issuer)
+                .withAudience(audience)
+                .build()
+                .verify(token)
+
+            val userId = decodedJWT.getClaim("userId")?.asString()
+            val accessClaim = decodedJWT.getClaim("access")?.asString()
+
+            if (!accessClaim.isNullOrBlank() && accessClaim == "all" && !userId.isNullOrBlank()) {
+                generateRefreshToken(userId)
+            } else {
+                null
+            }
         } catch (e: Exception) {
             null
         }
@@ -53,7 +83,15 @@ class JwtService(private val config: ApplicationConfig) {
                 .withAudience(audience)
                 .build()
                 .verify(token)
-            decodedJWT.getClaim("userId").asString()
+
+            val userId = decodedJWT.getClaim("userId")?.asString()
+            val accessClaim = decodedJWT.getClaim("access")?.asString()
+
+            if (!accessClaim.isNullOrBlank() && accessClaim == "all" && !userId.isNullOrBlank()) {
+                userId
+            } else {
+                null
+            }
         } catch (e: Exception) {
             null
         }

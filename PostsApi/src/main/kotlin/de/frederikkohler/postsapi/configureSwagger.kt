@@ -10,7 +10,6 @@ import io.ktor.server.application.Application
 import io.ktor.server.application.install
 import io.ktor.server.routing.route
 import io.ktor.server.routing.routing
-import io.ktor.server.util.url
 
 fun Application.configureSwagger() {
     install(OpenApi) {

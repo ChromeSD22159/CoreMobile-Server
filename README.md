@@ -60,6 +60,12 @@ docker compose -f docker-compose.local.yml images
 docker compose -f docker-compose.local.yml stop auth-api
 ```
 
+### delete local db
+```bash 
+docker compose down
+rm -rf ./tmp/db
+```
+
 #### Delete images
 ```bash
 docker compose -f docker-compose.local.yml stop auth-api
@@ -68,18 +74,22 @@ docker compose -f docker-compose.local.yml rm auth-api
 
 ### Update AuthApi und Push to Docker Hub
 ```bash
-docker compose -f docker-compose.local.yml build auth-api &&
+docker compose build auth-api &&
 docker tag protheseconnected-auth-api prothese-connected-auth-api:latest &&
 docker tag prothese-connected-auth-api chromesd22159/auth-api:latest &&
-docker push chromesd22159/auth-api:latest 
+docker push chromesd22159/auth-api:latest && 
+docker compose down && 
+docker compose -f docker-compose.prod.yml up -d 
 ````
 
 ### Update PostsApi und Push to Docker Hub
 ```bash  
-docker compose -f docker-compose.local.yml build posts-api && 
+docker compose build posts-api && 
 docker tag protheseconnected-posts-api prothese-connected-posts-api:latest &&
 docker tag prothese-connected-posts-api chromesd22159/posts-api:latest &&
-docker push chromesd22159/posts-api:latest
+docker push chromesd22159/posts-api:latest && 
+docker compose down && 
+docker compose -f docker-compose.prod.yml up -d 
 ````
 
 ### [open swagger SwaggerDoc](http://0.0.0.0:8080/swagger/index.html#/)
