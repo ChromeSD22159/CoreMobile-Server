@@ -6,19 +6,21 @@ services:
     ports:
       - "8080:8080"
     volumes:
-      - ../CustomerFiles/serviceAccountKey.json:/app/CoreMobileServer/serviceAccountKey.json:ro
-      - ../CustomerFiles/serviceAccountKey.json:/app/CoreMobileServer/serviceAccountKey.json:ro
+      - ./CustomerFiles/serviceAccountKey.json:/app/CoreMobileServer/serviceAccountKey.json:ro
+      - ./CustomerFiles/tables.yaml:/app/CoreMobileServer/tables.yaml:ro
+      - ./CustomerFiles/config.yaml:/app/CoreMobileServer/config.yaml:ro
     depends_on:
       core-mobile-db:
         condition: service_healthy
-  nginx:
+  core-mobile-nginx:
     image: nginx:latest
     ports:
       - "80:80"
     volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./CustomerFiles/nginx.conf:/etc/nginx/nginx.conf
     depends_on:
       - core-mobile-server
+      - core-mobile-db
   core-mobile-db:
     image: postgres
     volumes:

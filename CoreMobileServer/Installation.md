@@ -29,6 +29,7 @@ Diese Anwendung kann optional mit Firebase-Integration betrieben werden. Um die 
 # ... deine docker-compose.yaml ...
 volumes:
   - ./serviceAccountKey.json:/app/CoreMobileServer/serviceAccountKey.json:ro
+  - ./tables.yaml:/app/CoreMobileServer/tables.yaml:ro
 # ...
 ```
 
@@ -36,6 +37,7 @@ volumes:
 - docker-compose.yaml
 - nginx.conf
 - serviceAccountKey.json
+- tables.yaml
 
 ## Docker Compose File
 ```yaml
@@ -46,6 +48,7 @@ services:
       - "8080:8080"
     volumes:
       - ./serviceAccountKey.json:/app/CoreMobileServer/serviceAccountKey.json:ro
+      - ./tables.yaml:/app/CoreMobileServer/tables.yaml:ro
     depends_on:
       db:
         condition: service_healthy

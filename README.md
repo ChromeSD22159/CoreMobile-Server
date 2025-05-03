@@ -117,5 +117,21 @@ kubectl rollout restart deployment/posts-api-deployment
 kubectl rollout status deployment/posts-api-deployment
 ```
 
+# Publish CLI
+```bash
+./gradlew cli:shadowJar 
+```
+
+```bash 
+cd cli 
+cp build/libs/cli-all.jar . 
+npm publish  
+```
+
+```bash
+sudo npm install core-mobile-cli 
+coremobile --help
+```
+
 ### [open swagger SwaggerDoc](http://0.0.0.0:8080/swagger/index.html#/)
 ### [Ktor SwaggerDoc](https://smiley4.github.io/ktor-openapi-tools/latest/examples/request-response/)

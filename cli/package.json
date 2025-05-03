@@ -1,0 +1,14 @@
+{
+  "name": "core-mobile-cli-debug",
+  "version": "0.1.5",
+  "description": "Ein cooles CLI-Tool für CoreMobile.",
+  "bin": {
+    "coremobile": "./cli.js"
+  },
+  "files": [
+    "cli.js",
+    "cli-all.jar"
+  ],
+  "author": "Frederik Kohler",
+  "license": "ISC"
+}

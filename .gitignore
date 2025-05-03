@@ -34,7 +34,7 @@ out/
 /tmp/
 local.properties
 **/SharedConfig.kt
-/CustomerFiles/
+**/CustomerFiles/
 ### VS Code ###
 .vscode/
 .DS_Store
