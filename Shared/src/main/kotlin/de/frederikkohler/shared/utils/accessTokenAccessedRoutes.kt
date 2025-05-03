@@ -9,7 +9,7 @@ fun Application.accessTokenAccessedRoutes(
     routes: Routing.() -> Unit
 ) {
     routing {
-        authenticate("authenticated") {
+        authenticate(RouteTypes.AUTHENTICATED.displayName) {
             routes()
         }
     }

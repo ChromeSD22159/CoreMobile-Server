@@ -1,5 +1,7 @@
-rootProject.name = "ProtheseConnected"
+rootProject.name = "CoreMobile"
 
-include(":AuthApi")
+include(":ConnectedServer")
 include(":Shared")
-include(":PostsApi")
+include(":CoreMobileServer")
+//include(":PostsApi")
+include(":Test")

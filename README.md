@@ -79,7 +79,7 @@ docker tag protheseconnected-auth-api prothese-connected-auth-api:latest &&
 docker tag prothese-connected-auth-api chromesd22159/auth-api:latest &&
 docker push chromesd22159/auth-api:latest && 
 docker compose down && 
-docker compose -f docker-compose.prod.yml up -d 
+##docker compose -f docker-compose.prod.yml up -d 
 ````
 
 ### Update PostsApi und Push to Docker Hub
@@ -89,8 +89,33 @@ docker tag protheseconnected-posts-api prothese-connected-posts-api:latest &&
 docker tag prothese-connected-posts-api chromesd22159/posts-api:latest &&
 docker push chromesd22159/posts-api:latest && 
 docker compose down && 
-docker compose -f docker-compose.prod.yml up -d 
+##docker compose -f docker-compose.prod.yml up -d 
 ````
+
+### Lösche all caches
+```bash
+docker rmi $(docker images -aq)
+docker builder prune --all
+```
+
+```bash
+### Stelle deine Anwendungs-Services bereit
+kubectl apply -f auth-api-deployment.yaml
+kubectl apply -f auth-api-service.yaml
+kubectl apply -f posts-api-deployment.yaml
+kubectl apply -f posts-api-service.yaml
+kubectl apply -f db-deployment.yaml
+kubectl apply -f db-service.yaml
+
+kubectl scale deployment/auth-api-deployment --replicas=0 ### pod entfernen
+
+kubectl get pods -n ingress-nginx ### prüfe ingres
+kubectl apply -f ingress.yaml ### ingres anwenden
+kubectl get service -n ingress-nginx ### kubectl get service -n ingress-nginx
+
+kubectl rollout restart deployment/posts-api-deployment
+kubectl rollout status deployment/posts-api-deployment
+```
 
 ### [open swagger SwaggerDoc](http://0.0.0.0:8080/swagger/index.html#/)
 ### [Ktor SwaggerDoc](https://smiley4.github.io/ktor-openapi-tools/latest/examples/request-response/)

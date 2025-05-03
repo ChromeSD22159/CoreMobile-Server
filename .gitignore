@@ -33,5 +33,8 @@ out/
 /.nb-gradle/
 /tmp/
 local.properties
+**/SharedConfig.kt
+/CustomerFiles/
 ### VS Code ###
 .vscode/
+.DS_Store

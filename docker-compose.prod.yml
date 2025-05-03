@@ -6,15 +6,6 @@ services:
     depends_on:
       db:
         condition: service_healthy
-
-  posts-api:
-    image: chromesd22159/posts-api:latest
-    ports:
-      - "8081:8080"
-    depends_on:
-      db:
-        condition: service_healthy
-
   nginx:
     image: nginx:latest
     ports:
@@ -24,7 +15,6 @@ services:
     depends_on:
       - auth-api
       - posts-api
-
   db:
     image: postgres
     volumes:

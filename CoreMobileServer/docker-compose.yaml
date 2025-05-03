@@ -1,14 +1,16 @@
 services:
-  connected-server:
+  core-mobile-server:
     build:
-      context: .
-      dockerfile: ConnectedServer/Dockerfile
+      context: ../
+      dockerfile: CoreMobileServer/Dockerfile
     ports:
       - "8080:8080"
+    volumes:
+      - ../CustomerFiles/serviceAccountKey.json:/app/CoreMobileServer/serviceAccountKey.json:ro
+      - ../CustomerFiles/serviceAccountKey.json:/app/CoreMobileServer/serviceAccountKey.json:ro
     depends_on:
-      db:
+      core-mobile-db:
         condition: service_healthy
-
   nginx:
     image: nginx:latest
     ports:
@@ -16,9 +18,8 @@ services:
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf
     depends_on:
-      - connected-server
-
-  db:
+      - core-mobile-server
+  core-mobile-db:
     image: postgres
     volumes:
       - ./tmp/db:/var/lib/postgresql/data
@@ -30,18 +31,3 @@ services:
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U postgres" ]
       interval: 1s
-
-#### LOCAL DEPLOYMENT
-# docker-compose down
-# #docker-compose up -d
-
-#### Build und LOCAL DEPLOYMENT
-# docker compose down &&
-# docker compose build auth-api &&
-# docker compose build posts-api &&
-# docker compose up --watch
-
-#### SERVERSIDE
-# docker-compose pull
-# docker-compose down
-# docker-compose up -d

@@ -5,13 +5,12 @@ import io.ktor.server.auth.authenticate
 import io.ktor.server.routing.Routing
 import io.ktor.server.routing.routing
 
-fun Application.authenticatedRoutes(
+fun Application.sdkRoutes(
     routes: Routing.() -> Unit
 ) {
     routing {
-        authenticate(RouteTypes.AUTHENTICATED.displayName) {
+        authenticate(RouteTypes.SDK.displayName) {
             routes()
         }
     }
 }
-
