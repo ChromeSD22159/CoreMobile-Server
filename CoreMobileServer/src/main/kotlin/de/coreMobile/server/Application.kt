@@ -1,5 +1,7 @@
 package de.coreMobile.server
 
+import de.coreMobile.server.genericRoutes.genericRoutes
+import de.coreMobile.server.libs.ConfigService
 import de.coreMobile.server.libs.DatabaseService
 import de.frederikkohler.shared.configure.configureMonitoring
 import de.frederikkohler.shared.configure.configureSecurity
@@ -13,12 +15,15 @@ fun main(args: Array<String>) {
 
 fun Application.module() {
     val jwtService = JwtService()
-    val databaseService = DatabaseService()
-    databaseService.init()
+    val configService = ConfigService(environment)
+    val databaseService = DatabaseService(environment, configService.yamlTables, configService.yamlConfig)
 
-    configureSwagger(databaseService.swaggerSchemas)
+    configureSwagger(databaseService.swaggerSchemas, databaseService.generatedTables)
+    genericRoutes(databaseService.generatedTables)
     configureSerialization()
     configureMonitoring()
     configureSecurity(jwtService)
-    configureSDKRouting(jwtService)
+    configureSDKRouting(jwtService, databaseService)
 }
+
+

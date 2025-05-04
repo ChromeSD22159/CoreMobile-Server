@@ -51,10 +51,10 @@ fun Application.configureUserProfileRouting(
                     if (userDto != null) {
                         call.ok(userDto)
                     } else {
-                        call.badRequest()
+                        call.badRequest("User not found")
                     }
                 } else {
-                    call.badRequest()
+                    call.badRequest("Invalid token")
                 }
             } else {
                 call.unauthorized()
@@ -96,7 +96,7 @@ fun Application.configureUserProfileRouting(
                     call.ok(it)
                 }
             } catch (e: Exception) {
-                call.badRequest()
+                call.badRequest(e.message)
             }
         }
 
@@ -109,7 +109,7 @@ fun Application.configureUserProfileRouting(
                 }
             }
         }) {
-            val userId = call.parameters["userId"] ?: return@delete call.badRequest()
+            val userId = call.parameters["userId"] ?: return@delete call.badRequest("No UserId given")
             if (userProfileRepository.deleteUserProfile(userId)) {
                 call.ok(true)
             } else {

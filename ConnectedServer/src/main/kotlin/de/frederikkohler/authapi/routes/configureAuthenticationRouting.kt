@@ -49,14 +49,14 @@ fun Application.configureAuthenticationRouting(
                 }
             }
         }) {
-            val email = call.parameters["email"] ?: return@post call.badRequest()
-            val password = call.parameters["password"] ?: return@post call.badRequest()
+            val email = call.parameters["email"] ?: return@post call.badRequest("Missing email")
+            val password = call.parameters["password"] ?: return@post call.badRequest("Missing password")
 
             val userDTO = authRepository.login(email, password)
             if (userDTO != null) {
                 call.respond(HttpStatusCode.OK, userDTO)
             } else {
-                call.badRequest()
+                call.badRequest("Invalid email or password")
             }
         }
 
@@ -112,11 +112,11 @@ fun Application.configureAuthenticationRouting(
                 }
             }
         }) {
-            val email = call.parameters["email"] ?: return@post call.badRequest()
-            val password = call.parameters["password"] ?: return@post call.badRequest()
-            val firstName = call.parameters["firstName"] ?: return@post call.badRequest()
-            val lastName = call.parameters["lastName"] ?: return@post call.badRequest()
-            val birthDate = call.parameters["birthDate"] ?: return@post call.badRequest()
+            val email = call.parameters["email"] ?: return@post call.badRequest("Missing email")
+            val password = call.parameters["password"] ?: return@post call.badRequest("Missing password")
+            val firstName = call.parameters["firstName"] ?: return@post call.badRequest("Missing firstName")
+            val lastName = call.parameters["lastName"] ?: return@post call.badRequest("Missing lastName")
+            val birthDate = call.parameters["birthDate"] ?: return@post call.badRequest("Missing birthDate")
 
             val user = authRepository.createUser(email, password)
 

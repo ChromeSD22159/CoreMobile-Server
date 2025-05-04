@@ -23,11 +23,23 @@ jwt:
  
 #### Build IMAGE und Teste Lokal
 ```bash
-docker compose down &&
+docker compose down 
 docker compose build core-mobile-server
 docker compose up -d
 ```
- 
+
+```bash
+docker compose down  
+docker compose up -d
+docker logs coremobileserver-core-mobile-server-1
+```
+
+### delete local db
+```bash 
+docker compose down
+rm -rf ./tmp/db
+```
+
 ### Update core-mobile-server und Push to Docker Hub (coremobileserver- weil das project so heisst)
 ```bash
 docker compose build core-mobile-server && 
@@ -40,6 +52,7 @@ docker tag protheseconnected-connected-server chromesd22159/core-mobile-server:l
 docker push chromesd22159/core-mobile-server:latest
 ```
 
+### TERMINAL IM CONTAINER
 ```bash
 docker exec -it coremobileserver-core-mobile-server-1 bash
 ```

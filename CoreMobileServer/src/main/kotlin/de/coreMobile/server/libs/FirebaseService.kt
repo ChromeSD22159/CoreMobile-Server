@@ -1,9 +1,10 @@
-package de.coreMobile.server.repository
+package de.coreMobile.server.libs
 
 import com.google.auth.oauth2.GoogleCredentials
 import de.coreMobile.server.model.firebaseMessage.FirebaseConfig
 import de.coreMobile.server.model.firebaseMessage.request.Notification
 import de.coreMobile.server.model.firebaseMessage.response.NotificationResponse
+import de.coreMobile.server.utils.loadMountedJson
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.engine.cio.CIO
@@ -16,13 +17,16 @@ import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.Json
 import java.io.FileInputStream
 
-class FirebaseRepository {
-    private val serviceAccountFile = "/app/CoreMobileServer/serviceAccountKey.json"
+class FirebaseService {
+    private val logging = Logging("FirebaseService")
+    var serviceAccount: FirebaseConfig? = null
+
+    init {
+        loadServiceAccount()
+    }
+
     private val client = HttpClient(CIO) {
         install(ContentNegotiation) {
             json()
@@ -30,18 +34,22 @@ class FirebaseRepository {
     }
 
     suspend fun getAccessToken(): String? {
-        return try {
+        try {
             val scopes = listOf("https://www.googleapis.com/auth/firebase.messaging")
             val googleCredentials =
                 withContext(Dispatchers.IO) {
                     GoogleCredentials
-                        .fromStream(FileInputStream(serviceAccountFile))
+                        .fromStream(FileInputStream("/app/CoreMobileServer/CustomerFiles/serviceAccountKey.json"))
                 }
                 .createScoped(scopes)
             googleCredentials.refresh()
-            googleCredentials.accessToken.tokenValue
+
+
+            logging.info("Error getting access token: ${googleCredentials.accessToken.tokenValue}")
+
+            return googleCredentials.accessToken.tokenValue
         } catch (e: Exception) {
-            println("Error getting access token: ${e.message}")
+            logging.error("Error getting access token: ${e.message}")
             return null
         }
     }
@@ -51,7 +59,6 @@ class FirebaseRepository {
         request: Notification
     ): Result<NotificationResponse> {
         return try {
-            val serviceAccount = loadServiceAccount()
             val apiToken = getAccessToken()
 
             if(deviceToken.isBlank()) throw Exception("No device token provided")
@@ -69,21 +76,27 @@ class FirebaseRepository {
                 )
             )
 
-            val response: NotificationResponse = client.post("https://fcm.googleapis.com/v1/projects/${serviceAccount.projectId}/messages:send") {
-                contentType(ContentType.Application.Json)
-                bearerAuth(apiToken)
-                setBody(payload)
-            }.body()
+            if(serviceAccount != null) {
+                val response: NotificationResponse = client.post("https://fcm.googleapis.com/v1/projects/${serviceAccount!!.projectId}/messages:send") {
+                    contentType(ContentType.Application.Json)
+                    bearerAuth(apiToken)
+                    setBody(payload)
+                }.body()
 
-            Result.success(response)
+                Result.success(response)
+            } else {
+                throw Exception("No firebase project id found")
+            }
         } catch (e: Exception) {
-            Result.failure<NotificationResponse>(e)
+            Result.failure(e)
         }
     }
 
-    fun loadServiceAccount(): FirebaseConfig? {
-        return try {
-            Json.decodeFromString<FirebaseConfig>(FileInputStream(serviceAccountFile).bufferedReader().use { it.readText() })
-        } catch (e: Exception) { null }
+    fun loadServiceAccount() {
+        try {
+            serviceAccount = loadMountedJson("serviceAccountKey.json")
+        } catch (e: Exception) {
+            logging.error("loadTablesConfigYaml: ${e.message.toString()}")
+        }
     }
 }

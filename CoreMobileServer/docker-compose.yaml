@@ -5,10 +5,12 @@ services:
       dockerfile: CoreMobileServer/Dockerfile
     ports:
       - "8080:8080"
+    environment:
+      CONFIG_PREFIX: "/app/"
     volumes:
-      - ./CustomerFiles/serviceAccountKey.json:/app/CoreMobileServer/serviceAccountKey.json:ro
-      - ./CustomerFiles/tables.yaml:/app/CoreMobileServer/tables.yaml:ro
-      - ./CustomerFiles/config.yaml:/app/CoreMobileServer/config.yaml:ro
+      - ./CustomerFiles/config.yaml:/app/CoreMobileServer/CustomerFiles/config.yaml:ro
+      - ./CustomerFiles/serviceAccountKey.json:/app/CoreMobileServer/CustomerFiles/serviceAccountKey.json:ro
+      - ./CustomerFiles/tables.yaml:/app/CoreMobileServer/CustomerFiles/tables.yaml:ro
     depends_on:
       core-mobile-db:
         condition: service_healthy

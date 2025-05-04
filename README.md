@@ -97,37 +97,21 @@ docker compose down &&
 docker rmi $(docker images -aq)
 docker builder prune --all
 ```
+ 
 
-```bash
-### Stelle deine Anwendungs-Services bereit
-kubectl apply -f auth-api-deployment.yaml
-kubectl apply -f auth-api-service.yaml
-kubectl apply -f posts-api-deployment.yaml
-kubectl apply -f posts-api-service.yaml
-kubectl apply -f db-deployment.yaml
-kubectl apply -f db-service.yaml
-
-kubectl scale deployment/auth-api-deployment --replicas=0 ### pod entfernen
-
-kubectl get pods -n ingress-nginx ### prüfe ingres
-kubectl apply -f ingress.yaml ### ingres anwenden
-kubectl get service -n ingress-nginx ### kubectl get service -n ingress-nginx
-
-kubectl rollout restart deployment/posts-api-deployment
-kubectl rollout status deployment/posts-api-deployment
-```
-
-# Publish CLI
+# build CLI
 ```bash
 ./gradlew cli:shadowJar 
 ```
-
+ 
+## publish CLI to NPM
 ```bash 
 cd cli 
 cp build/libs/cli-all.jar . 
 npm publish  
 ```
 
+## install CLI via NPM
 ```bash
 sudo npm install core-mobile-cli 
 coremobile --help

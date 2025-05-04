@@ -3,18 +3,9 @@ FROM gradle:8.5-jdk17 AS builder
 WORKDIR /app
 
 # Force cache invalidation
-COPY ../gradle ./gradle
-COPY ../gradlew ./
-RUN chmod +x ./gradlew
+COPY ../. .
 
-COPY CoreMobileServer/ build.gradle.kts
-COPY settings.gradle.kts ./
-
-RUN ./gradlew dependencies --write-locks
-
-COPY CoreMobileServer ./CoreMobileServer
-COPY Shared ./Shared
-
+ENV GRADLE_USER_HOME=/home/gradle/cache_home
 RUN ./gradlew :CoreMobileServer:installDist
 
 # 2. Runtime Stage

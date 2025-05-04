@@ -40,7 +40,7 @@ fun Application.configureSDKRouting(
                 val response = SessionTokensDTO(refreshTokenOrNull)
                 call.ok(response)
             } else {
-                call.badRequest()
+                call.badRequest("Invalid token")
             }
         }
     }

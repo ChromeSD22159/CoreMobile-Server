@@ -1,13 +1,11 @@
 package de.frederikkohler.authapi.routes
 
-import de.frederikkohler.authapi.SessionTokensDTO
 import de.frederikkohler.authapi.errors.ProjectException
 import de.frederikkohler.authapi.model.project.request.NewProjectDto
 import de.frederikkohler.authapi.model.project.response.ProjectDto
 import de.frederikkohler.authapi.repository.ProjectRepository
 import de.frederikkohler.shared.services.JwtService
 import de.frederikkohler.shared.utils.authenticatedRoutes
-import de.frederikkohler.shared.utils.sdkRoutes
 import de.frederikkohler.utils.badRequest
 import de.frederikkohler.utils.getAuthToken
 import de.frederikkohler.utils.ok
@@ -20,9 +18,6 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.Application
 import io.ktor.server.request.receive
 import io.ktor.server.response.respond
-
-
-
 
 fun Application.configureProjectRouting(
     jwtService: JwtService,
@@ -79,7 +74,7 @@ fun Application.configureProjectRouting(
                         call.ok(it)
                     }
                     result.onFailure {
-                        call.badRequest()
+                        call.badRequest(it.message ?: "Unknown error")
                     }
                 } else call.unauthorized()
             } else {
@@ -115,7 +110,7 @@ fun Application.configureProjectRouting(
                 }
             }
         }) {
-            val projectId = call.parameters["projectId"] ?: return@delete call.badRequest()
+            val projectId = call.parameters["projectId"] ?: return@delete call.badRequest("Missing project ID")
 
             try {
                 val result = projectRepository.deleteProject(projectId)
@@ -180,7 +175,7 @@ fun Application.configureProjectRouting(
         }) {
             val token = call.getAuthToken() ?: return@put call.unauthorized()
             val userIdResult = jwtService.verifyRefreshTokenAndGetUserId(token) ?: return@put call.unauthorized()
-            val projectId = call.parameters["projectId"] ?: return@put call.badRequest()
+            val projectId = call.parameters["projectId"] ?: return@put call.badRequest("Missing project ID")
 
             val result = projectRepository.generateProjectToken(userIdResult, projectId)
 

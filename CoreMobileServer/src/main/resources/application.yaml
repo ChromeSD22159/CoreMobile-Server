@@ -7,7 +7,7 @@ ktor:
     port: 8080
 storage:
   driverClassName: "org.postgresql.Driver"
-  jdbcURL: "jdbc:postgresql://db:5432/ktor_tutorial_db"
+  jdbcURL: "jdbc:postgresql://core-mobile-db:5432/ktor_tutorial_db"
   user: "postgres"
   password: "password"
 jwt:
